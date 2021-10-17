@@ -1,0 +1,50 @@
+#!/bin/bash
+MPR='https://mpr.hunterwittenborn.com'
+TMP="/tmp/lolz/"
+
+function lolzy_message() {
+	local MESSAGE_TYPE="${1}"
+	local MESSAGE="${2}"
+
+	case ${MESSAGE_TYPE} in
+		info) echo -e "[+] LOLZY: ${MESSAGE}";;
+		warn) echo -e "[*] CRAP: ${MESSAGE}";;
+		error) echo -e "[!] GOSH DANG: ${MESSAGE}";;
+		*) echo -e "[?] UNKNOWN: ${MESSAGE}";;
+	esac
+}
+
+if ! command -v makedeb &>/dev/null; then
+  lolzy_message error "makedeb does not exist"
+  exit 69
+fi
+
+case "${1}" in
+  install)
+	INPUT="$2"
+	URL="https://mpr.hunterwittenborn.com/cgit/aur.git/plain/PKGBUILD?h=$INPUT"
+	if ! curl --output /dev/null --silent --head --fail "$URL"; then
+		lolzy_message error "$INPUT does not exist"
+		exit 69
+	fi
+	mkdir -p $TMP
+	cd $TMP
+	git clone "$MPR/$INPUT.git"
+	cd $(basename $INPUT .git)
+	makedeb -si
+	rm -rfv $TMP
+	exit
+	;;
+  remove)
+	INPUT="$2"
+	sudo apt-get remove "$INPUT"
+	;;
+  help)
+	echo "lolzy -- the stupid MPR helper"
+	exit 69
+	;;
+  *)
+	echo "onichan could not find your command"
+	exit 69
+	;;
+esac
