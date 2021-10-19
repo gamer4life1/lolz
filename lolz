@@ -60,7 +60,7 @@ case "${1}" in
 		fi
 		# it's about to get rough
 		# get list of deps
-		deps=( $("$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[].Depends' | sed 's/\,//g' | sed 's/\[//g' | sed 's/\]//g' | tr -d '"') )
+		deps=( $(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[].Depends' | sed 's/\,//g' | sed 's/\[//g' | sed 's/\]//g' | tr -d '"') )
 		# do a list of deps
 		for z in ${deps[@]}; do
 			# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
