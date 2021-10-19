@@ -74,8 +74,16 @@ case "${1}" in
 			read -e -p "Do you want to continue? " choice
 			if [[ "$choice" == [Yy]* ]]; then
 				for i in ${upgradable[@]}; do
-					lolz install "$i"
+					if ! lolz install "$i"; then
+						failed+=("$i")
+					else
+						lolzy_message info "Upgraded $i"
+					fi
 				done
+				if [[ "${#failed[@]}" -ne 0]]; then
+					lolzy_message error "These packages failed to upgrade: ${failed[@]}"
+					exit 69
+				fi
 			else
 				lolzy_message info "OK goodbye!"
 				exit 69
