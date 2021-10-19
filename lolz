@@ -39,6 +39,7 @@ case "${1}" in
 		lolzy_message error "$INPUT does not exist"
 		exit 69
 	fi
+	lolzy_message info "installing $2..."
 	mkdir -p $TMP
 	cd $TMP
 	git clone "$MPR/$INPUT.git"
