@@ -20,6 +20,7 @@ help_function() {
 	echo "lolz remove -- removes a package"
 	echo "lolz upgrade -- upgrades packages"
 	echo "lolz search -- searches for package"
+	echo "lolz list -- lists packages installed"
 }
 
 function lolzy_message() {
