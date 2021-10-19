@@ -34,7 +34,7 @@ case "${1}" in
   install)
 	INPUT="$2"
 	URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$INPUT"
-	VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$INPUT" | jq '.results[0].Version' | tr -d '"')
+	VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$INPUT" | jq '.results[0].Version' | tr -d '"') &
 	if ! curl --output /dev/null --silent --head --fail "$URL"; then
 		lolzy_message error "$INPUT does not exist"
 		exit 69
@@ -46,6 +46,7 @@ case "${1}" in
 	cd $(basename $INPUT .git)
 	makedeb -si
 	rm -rfv $TMP
+	wait
 	echo "$VERSION" | sudo tee /var/db/lolz/$INPUT >/dev/null
 	exit
 	;;
@@ -70,7 +71,7 @@ case "${1}" in
 			lolzy_message info "Nothing to upgrade"
 		else
 			echo "These packages can be upgraded:"
-			echo "\t${upgradable[@]}"
+			echo -e "\t${upgradable[@]}"
 			read -e -p "Do you want to continue? " choice
 			if [[ "$choice" == [Yy]* ]]; then
 				for i in ${upgradable[@]}; do
@@ -80,7 +81,7 @@ case "${1}" in
 						lolzy_message info "Upgraded $i"
 					fi
 				done
-				if [[ "${#failed[@]}" -ne 0]]; then
+				if [[ "${#failed[@]}" -ne 0 ]]; then
 					lolzy_message error "These packages failed to upgrade: ${failed[@]}"
 					exit 69
 				fi
