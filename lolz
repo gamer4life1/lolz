@@ -51,7 +51,12 @@ case "${1}" in
 	;;
   remove)
 	INPUT="$2"
-	sudo apt-get remove "$INPUT"
+	if [[ -f /var/db/lolz/$INPUT ]]; then
+		sudo apt-get remove "$INPUT"
+	else
+		lolzy_message error "$INPUT is not a valid MPR package"
+		exit 69
+	fi
 	;;
   upgrade)
 	# get a list of packages installed by lolz
@@ -87,6 +92,9 @@ case "${1}" in
 	;;
   help)
 	echo "lolzy -- the stupid MPR helper"
+	echo "lolz install -- installs a package"
+	echo "lolz remove -- removes a package"
+	echo "lolz upgrade -- upgrades packages"
 	exit 69
 	;;
   *)
