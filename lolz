@@ -14,6 +14,14 @@ mark_upgrade() {
 	upgradable+=("$1")
 }
 
+help_function() {
+	echo "lolzy -- the stupid MPR helper"
+	echo "lolz install -- installs a package"
+	echo "lolz remove -- removes a package"
+	echo "lolz upgrade -- upgrades packages"
+	echo "lolz search -- searches for package"
+}
+
 function lolzy_message() {
 	local MESSAGE_TYPE="${1}"
 	local MESSAGE="${2}"
@@ -108,14 +116,11 @@ case "${1}" in
 	fi
 	;;
   help)
-	echo "lolzy -- the stupid MPR helper"
-	echo "lolz install -- installs a package"
-	echo "lolz remove -- removes a package"
-	echo "lolz upgrade -- upgrades packages"
-	exit 69
+	help_function
+	exit
 	;;
   *)
-	echo "So close my bro"
+	help_function
 	exit 69
 	;;
 esac
