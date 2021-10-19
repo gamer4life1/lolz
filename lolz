@@ -88,6 +88,8 @@ case "${1}" in
 	if ! [[ $(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"') ]]; then
 		lolzy_message error "Nope, no packages matching $INPUT"
 		exit 69
+	else
+		curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"'
 	fi
 	;;
   help)
