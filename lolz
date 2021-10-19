@@ -16,7 +16,7 @@ mark_upgrade() {
 
 help_function() {
 	echo "lolzy -- the stupid MPR helper"
-	echo "lolz install -- installs a package"
+	echo "lolz install (-y) -- installs a package"
 	echo "lolz remove -- removes a package"
 	echo "lolz upgrade -- upgrades packages"
 	echo "lolz search -- searches for package"
@@ -46,6 +46,10 @@ fi
 case "${1}" in
   install)
 	shift
+	if [[ $1 == "-y" ]]; then
+		export NOEDIT=1
+		shift
+	fi
 	INPUT="$*"
 	for i in $INPUT; do
 		URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$i"
@@ -59,6 +63,15 @@ case "${1}" in
 		cd $TMP
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
 		cd $(basename $i .git)
+		if [[ -z $NOEDIT ]]; then
+			if [[ -n $EDITOR ]]; then
+				$EDITOR PKGBUILD
+			elif [[ -n $VISUAL ]]; then
+				$VISUAL PKGBUILD
+			else
+				sensible-editor PKGBUILD
+			fi
+		fi
 		makedeb -si
 		rm -rf $TMP &
 		wait
