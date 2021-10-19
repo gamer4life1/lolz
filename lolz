@@ -62,7 +62,7 @@ case "${1}" in
 		# get list of deps
 		deps=( $(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[].Depends' | sed 's/\,//g' | sed 's/\[//g' | sed 's/\]//g' | tr -d '"') )
 		# do a list of deps
-		for z in ${deps[@]}; do
+		for z in "${deps[@]}"; do
 			# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
 			if ! apt-cache search --names-only "$z" >/dev/null; then
 				# if the package exists in the MPR, add it to the mprdeps list
@@ -73,9 +73,6 @@ case "${1}" in
 					lolzy_message error "$z is not a valid MPR or apt package"
 					exit 69
 				fi
-			# if apt works, add to the aptdeps list
-			else
-				aptdeps+=("$z")
 			fi
 		done
 		if [[ ${#mprdeps[@]} -ne 0 ]]; then
@@ -156,6 +153,10 @@ case "${1}" in
 	else
 		echo "$SEARCH"
 	fi
+	;;
+  list)
+	ls -1aA /var/db/lolz
+	exit
 	;;
   help)
 	help_function
