@@ -1,4 +1,5 @@
 #!/bin/bash
+export LC_ALL=C
 MPR='https://mpr.hunterwittenborn.com'
 TMP="/tmp/lolz/"
 if [[ ! -d /var/db/lolz ]]; then
@@ -38,7 +39,7 @@ case "${1}" in
   install)
 	INPUT="$2"
 	URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$INPUT"
-	VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$INPUT" | jq '.results[0].Version' | tr -d '"') &
+	VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$INPUT" | jq -C '.results[0].Version' | tr -d '"') &
 	if ! curl --output /dev/null --silent --head --fail "$URL"; then
 		lolzy_message error "$INPUT does not exist"
 		exit 69
@@ -67,7 +68,7 @@ case "${1}" in
 	# get a list of packages installed by lolz
 	for i in $(\ls -1aA /var/db/lolz); do
 		# check if the local version is less than the remote version and if so, mark it for upgrade
-		if ! version_greater_equal "$(cat /var/db/lolz/$i)" $(curl -s "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq '.results[0].Version' | tr -d '"'); then
+		if ! version_greater_equal "$(cat /var/db/lolz/$i)" $(curl -s "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"'); then
 			mark_upgrade "$i"
 		fi
 		# if the upgradable package count is 0, then that means nothing to upgrade
@@ -98,7 +99,7 @@ case "${1}" in
 	;;
   search)
 	INPUT="$2"
-	SEARCH=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"')
+	SEARCH=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq -C '.results[].Name' | tr -d '"')
 	if ! [[ $SEARCH ]]; then
 		lolzy_message error "Nope, no packages matching $INPUT"
 		exit 69
