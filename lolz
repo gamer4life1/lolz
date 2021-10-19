@@ -63,9 +63,17 @@ case "${1}" in
 		if [[ ${#upgradable[@]} -eq 0 ]]; then
 			lolzy_message info "Nothing to upgrade"
 		else
-			for i in ${upgradable[@]}; do
-				lolz install "$i"
-			done
+			echo "These packages can be upgraded:"
+			echo "\t${upgradable[@]}"
+			read -e -p "Do you want to continue? " choice
+			if [[ "$choice" == [Yy]* ]]; then
+				for i in ${upgradable[@]}; do
+					lolz install "$i"
+				done
+			else
+				lolzy_message info "OK goodbye!"
+				exit 69
+			fi
 		fi
 	done
 	;;
