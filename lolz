@@ -74,15 +74,7 @@ case "${1}" in
 	exit 69
 	;;
   *)
-	echo " ________________________________________
-/ lolz says' look at the dang help page, \
-\ ding dong                              /
- ----------------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||"
+	echo "So close my bro"
 	exit 69
 	;;
 esac
