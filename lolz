@@ -1,10 +1,12 @@
 #!/bin/bash
 MPR='https://mpr.hunterwittenborn.com'
 TMP="/tmp/lolz/"
-sudo mkdir -p /var/db/lolz
+if [[ ! -d /var/db/lolz ]]; then
+	sudo mkdir -p /var/db/lolz
+fi
 # https://unix.stackexchange.com/a/567537/391386
 version_greater_equal() {
-  printf '%s\n%s\n' "$2" "$1" | sort --check=quiet --version-sort
+	printf '%s\n%s\n' "$2" "$1" | sort --check=quiet --version-sort
 }
 
 mark_upgrade() {
