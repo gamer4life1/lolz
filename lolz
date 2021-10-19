@@ -42,7 +42,7 @@ case "${1}" in
 	lolzy_message info "installing $2..."
 	mkdir -p $TMP
 	cd $TMP
-	git clone "$MPR/$INPUT.git"
+	git clone --depth=1 "$MPR/$INPUT.git"
 	cd $(basename $INPUT .git)
 	makedeb -si
 	rm -rfv $TMP
