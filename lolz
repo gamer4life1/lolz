@@ -75,7 +75,7 @@ case "${1}" in
 				fi
 			# if apt works, add to the aptdeps list
 			else
-				aptdeps+="$z"
+				aptdeps+=("$z")
 			fi
 		done
 		if [[ ${#mprdeps[@]} -ne 0 ]]; then
