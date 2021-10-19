@@ -45,7 +45,7 @@ case "${1}" in
 	git clone --depth=1 --single-branch --branch=master "$MPR/$INPUT.git"
 	cd $(basename $INPUT .git)
 	makedeb -si
-	rm -rfv $TMP
+	rm -rf $TMP &
 	wait
 	echo "$VERSION" | sudo tee /var/db/lolz/$INPUT >/dev/null
 	exit
