@@ -78,6 +78,13 @@ case "${1}" in
 		fi
 	done
 	;;
+  search)
+	INPUT="$2"
+	if ! [[ $(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"') ]]; then
+		lolzy_message error "Nope, no packages matching $INPUT"
+		exit 69
+	fi
+	;;
   help)
 	echo "lolzy -- the stupid MPR helper"
 	exit 69
