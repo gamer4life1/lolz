@@ -65,7 +65,7 @@ case "${1}" in
 		# do a list of deps
 		for z in "${deps[@]}"; do
 			# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
-			if ! apt-cache show "$z" >/dev/null; then
+			if ! apt-cache show "$z" 2>/dev/null; then
 				# if the package exists in the MPR, add it to the mprdeps list
 				if curl --output /dev/null --silent --head --fail "$MPR/cgit/aur.git/plain/PKGBUILD?h=$z"; then
 					mprdeps+=("$z")
