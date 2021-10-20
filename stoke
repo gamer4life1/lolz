@@ -58,7 +58,7 @@ case "${1}" in
 	INPUT="$*"
 	for i in $INPUT; do
 		URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$i"
-		VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"') &
+		VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"')
 		if ! curl --output /dev/null --silent --head --fail "$URL"; then
 			stoke_message error "$i does not exist"
 			exit 1
@@ -106,7 +106,9 @@ case "${1}" in
 		if [[ ${#mprdeps[@]} -ne 0 ]]; then
 			stoke_message info "Installing MPR dependencies first"
 			for j in "${mprdeps[*]}"; do
-				stoke install "$j"
+				if ! stoke install "$j"; then
+					stoke_message error "$j failed to install"
+				fi
 			done
 		fi
 		if [[ -z ${aptdeps[*]} ]]; then
@@ -128,8 +130,7 @@ case "${1}" in
 		fi
 		makedeb -si --no-confirm
 		sudo apt-get remove "$mprdeps"
-		rm -rf $TMP &
-		wait
+		rm -rf $TMP
 		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
 	done
 	exit
@@ -192,7 +193,10 @@ case "${1}" in
 	fi
 	;;
   list)
-	ls -1aA /var/db/stoke
+	for i in $(ls -1aA /var/db/stoke); do
+		VERSION=$(cat /var/db/stoke/"$i")
+		echo "$i $VERSION"
+	done
 	exit
 	;;
   help)
