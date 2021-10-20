@@ -107,6 +107,7 @@ case "${1}" in
 	INPUT="$2"
 	if [[ -f /var/db/lolz/$INPUT ]]; then
 		sudo apt-get remove "$INPUT"
+		sudo rm -f /var/db/lolz/"$INPUT"
 	else
 		lolzy_message error "$INPUT is not a valid MPR package"
 		exit 69
