@@ -1,9 +1,9 @@
 #!/bin/bash
 export LC_ALL=C
 MPR='https://mpr.hunterwittenborn.com'
-TMP="/tmp/lolz/"
-if [[ ! -d /var/db/lolz ]]; then
-	sudo mkdir -p /var/db/lolz
+TMP="/tmp/stoke/"
+if [[ ! -d /var/db/stoke ]]; then
+	sudo mkdir -p /var/db/stoke
 fi
 # https://unix.stackexchange.com/a/567537/391386
 version_greater_equal() {
@@ -15,15 +15,15 @@ mark_upgrade() {
 }
 
 help_function() {
-	echo "lolzy -- the stupid MPR helper"
-	echo "lolz install (-y) -- installs a package"
-	echo "lolz remove -- removes a package"
-	echo "lolz upgrade -- upgrades packages"
-	echo "lolz search -- searches for package"
-	echo "lolz list -- lists packages installed"
+	echo "stoke -- an MPR helper"
+	echo "stoke install (-y) -- installs a package"
+	echo "stoke remove -- removes a package"
+	echo "stoke upgrade -- upgrades packages"
+	echo "stoke search -- searches for package"
+	echo "stoke list -- lists packages installed"
 }
 
-function lolzy_message() {
+function stoke_message() {
 	local MESSAGE_TYPE="${1}"
 	local MESSAGE="${2}"
 	local NC='\033[0m'
@@ -32,9 +32,9 @@ function lolzy_message() {
 	local BYellow='\033[1;33m'
 
 	case ${MESSAGE_TYPE} in
-		info) echo -e "[${BGreen}+${NC}] LOLZY: ${MESSAGE}";;
-		warn) echo -e "[${BYellow}*${NC}] CRAP: ${MESSAGE}";;
-		error) echo -e "[${BRed}!${NC}] GOSH DANG: ${MESSAGE}";;
+		info) echo -e "[${BGreen}+${NC}] INFO: ${MESSAGE}";;
+		warn) echo -e "[${BYellow}*${NC}] WARN: ${MESSAGE}";;
+		error) echo -e "[${BRed}!${NC}] ERROR: ${MESSAGE}";;
 		*) echo -e "[?] UNKNOWN: ${MESSAGE}";;
 	esac
 }
@@ -56,7 +56,7 @@ case "${1}" in
 		URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$i"
 		VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"') &
 		if ! curl --output /dev/null --silent --head --fail "$URL"; then
-			lolzy_message error "$INPUT does not exist"
+			stoke_message error "$INPUT does not exist"
 			exit 69
 		fi
 		# it's about to get rough
@@ -71,18 +71,18 @@ case "${1}" in
 					mprdeps+=("$z")
 				# else fail
 				else
-					lolzy_message error "$z is not a valid MPR or apt package"
-					exit 69
+					stoke_message error "$z is not a valid MPR or apt package"
+					exit 1
 				fi
 			fi
 		done
 		if [[ ${#mprdeps[@]} -ne 0 ]]; then
-			lolzy_message info "Installing MPR dependencies first"
+			stoke_message info "Installing MPR dependencies first"
 			for i in ${mprdeps[@]}; do
-				lolz install "$i"
+				stoke install "$i"
 			done
 		fi
-		lolzy_message info "Installing $i..."
+		stoke_message info "Installing $i..."
 		mkdir -p $TMP
 		cd $TMP
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
@@ -99,31 +99,31 @@ case "${1}" in
 		makedeb -si
 		rm -rf $TMP &
 		wait
-		echo "$VERSION" | sudo tee /var/db/lolz/$i >/dev/null
+		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
 	done
 	exit
 	;;
   remove)
 	INPUT="$2"
-	if [[ -f /var/db/lolz/$INPUT ]]; then
+	if [[ -f /var/db/stoke/$INPUT ]]; then
 		sudo apt-get remove "$INPUT"
-		sudo rm -f /var/db/lolz/"$INPUT"
+		sudo rm -f /var/db/stoke/"$INPUT"
 	else
-		lolzy_message error "$INPUT is not a valid MPR package"
-		exit 69
+		stoke_message error "$INPUT is not a valid MPR package"
+		exit 1
 	fi
 	;;
   upgrade)
 	# get a list of packages installed by lolz
-	for i in $(\ls -1aA /var/db/lolz); do
+	for i in $(\ls -1aA /var/db/stoke); do
 		VERSION=$(curl -s "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"')
 		# check if the local version is less than the remote version and if so, mark it for upgrade
-		if ! version_greater_equal "$(cat /var/db/lolz/$i)" $VERSION; then
+		if ! version_greater_equal "$(cat /var/db/stoke/$i)" $VERSION; then
 			mark_upgrade "$i"
 		fi
 		# if the upgradable package count is 0, then that means nothing to upgrade
 		if [[ ${#upgradable[@]} -eq 0 ]]; then
-			lolzy_message info "Nothing to upgrade"
+			stoke_message info "Nothing to upgrade"
 		else
 			echo "These packages can be upgraded:"
 			echo -e "\t${upgradable[@]}"
@@ -133,16 +133,16 @@ case "${1}" in
 					if ! lolz install "$i"; then
 						failed+=("$i")
 					else
-						lolzy_message info "Upgraded $i"
+						stoke_message info "Upgraded $i"
 					fi
 				done
 				if [[ "${#failed[@]}" -ne 0 ]]; then
-					lolzy_message error "These packages failed to upgrade: ${failed[@]}"
-					exit 69
+					stoke_message error "These packages failed to upgrade: ${failed[@]}"
+					exit 1
 				fi
 			else
-				lolzy_message info "OK goodbye!"
-				exit 69
+				stoke_message info "OK goodbye!"
+				exit 61
 			fi
 		fi
 	done
@@ -151,14 +151,14 @@ case "${1}" in
 	INPUT="$2"
 	SEARCH=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq -C '.results[].Name' | tr -d '"')
 	if ! [[ $SEARCH ]]; then
-		lolzy_message error "Nope, no packages matching $INPUT"
-		exit 69
+		stoke_message error "Nope, no packages matching $INPUT"
+		exit 1
 	else
 		echo "$SEARCH"
 	fi
 	;;
   list)
-	ls -1aA /var/db/lolz
+	ls -1aA /var/db/stoke
 	exit
 	;;
   help)
@@ -167,6 +167,6 @@ case "${1}" in
 	;;
   *)
 	help_function
-	exit 69
+	exit 1
 	;;
 esac
