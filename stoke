@@ -137,7 +137,10 @@ case "${1}" in
   remove)
 	INPUT="$2"
 	if [[ -f /var/db/stoke/$INPUT ]]; then
-		sudo apt-get remove "$INPUT"
+		if ! sudo apt-get remove "$INPUT"; then
+			stoke_message error "Failed to remove $INPUT"
+			exit 1
+		fi
 		sudo rm -f /var/db/stoke/"$INPUT"
 	else
 		stoke_message error "$INPUT is not a valid MPR package"
