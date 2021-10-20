@@ -121,31 +121,31 @@ case "${1}" in
 		if ! version_greater_equal "$(cat /var/db/stoke/$i)" $VERSION; then
 			mark_upgrade "$i"
 		fi
-		# if the upgradable package count is 0, then that means nothing to upgrade
-		if [[ ${#upgradable[@]} -eq 0 ]]; then
-			stoke_message info "Nothing to upgrade"
-		else
-			echo "These packages can be upgraded:"
-			echo -e "\t${upgradable[@]}"
-			read -e -p "Do you want to continue? " choice
-			if [[ "$choice" == [Yy]* ]]; then
-				for i in ${upgradable[@]}; do
-					if ! stoke install "$i"; then
-						failed+=("$i")
-					else
-						stoke_message info "Upgraded $i"
-					fi
-				done
-				if [[ "${#failed[@]}" -ne 0 ]]; then
-					stoke_message error "These packages failed to upgrade: ${failed[@]}"
-					exit 1
+	done
+	# if the upgradable package count is 0, then that means nothing to upgrade
+	if [[ ${#upgradable[@]} -eq 0 ]]; then
+		stoke_message info "Nothing to upgrade"
+	else
+		echo "These packages can be upgraded:"
+		echo -e "\t${upgradable[@]}"
+		read -e -p "Do you want to continue? " choice
+		if [[ "$choice" == [Yy]* ]]; then
+			for i in ${upgradable[@]}; do
+				if ! stoke install "$i"; then
+					failed+=("$i")
+				else
+					stoke_message info "Upgraded $i"
 				fi
-			else
-				stoke_message info "OK goodbye!"
+			done
+			if [[ "${#failed[@]}" -ne 0 ]]; then
+				stoke_message error "These packages failed to upgrade: ${failed[@]}"
 				exit 1
 			fi
+		else
+			stoke_message info "OK goodbye!"
+			exit 1
 		fi
-	done
+	fi
 	;;
   search)
 	INPUT="$2"
