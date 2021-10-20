@@ -41,7 +41,7 @@ function stoke_message() {
 
 if ! command -v makedeb &>/dev/null; then
   lolzy_message error "makedeb does not exist"
-  exit 69
+  exit 1
 fi
 
 case "${1}" in
@@ -57,7 +57,7 @@ case "${1}" in
 		VERSION=$(curl -s "$MPR/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"') &
 		if ! curl --output /dev/null --silent --head --fail "$URL"; then
 			stoke_message error "$INPUT does not exist"
-			exit 69
+			exit 1
 		fi
 		# it's about to get rough
 		# get list of deps
@@ -142,7 +142,7 @@ case "${1}" in
 				fi
 			else
 				stoke_message info "OK goodbye!"
-				exit 61
+				exit 1
 			fi
 		fi
 	done
