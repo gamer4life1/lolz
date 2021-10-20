@@ -128,7 +128,7 @@ case "${1}" in
 				sensible-editor PKGBUILD || stoke_message warn "No editor found, continuing..."
 			fi
 		fi
-		makedeb -si --no-confirm
+		makedeb -sir --no-confirm
 		rm -rf $TMP
 		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
 	done
