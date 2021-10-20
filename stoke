@@ -102,10 +102,10 @@ case "${1}" in
 			elif [[ -n $VISUAL ]]; then
 				$VISUAL PKGBUILD
 			else
-				sensible-editor PKGBUILD
+				sensible-editor PKGBUILD || stoke_message warn "No editor found, continuing..."
 			fi
 		fi
-		makedeb -si
+		makedeb -si --no-confirm
 		rm -rf $TMP &
 		wait
 		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
