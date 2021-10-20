@@ -150,7 +150,7 @@ case "${1}" in
 	;;
   upgrade)
 	# get a list of packages installed by stoke
-	for i in $(\ls -1aA /var/db/stoke); do
+	for i in $(ls -1aA /var/db/stoke); do
 		VERSION=$(curl -s "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"')
 		# check if the local version is less than the remote version and if so, mark it for upgrade
 		if ! version_greater_equal "$(cat /var/db/stoke/$i)" $VERSION; then
@@ -194,8 +194,9 @@ case "${1}" in
 	;;
   list)
 	for i in $(ls -1aA /var/db/stoke); do
-		VERSION=$(cat /var/db/stoke/"$i")
-		echo "$i $VERSION"
+		if dpkg -l | grep "$i"; then
+			echo "$i"
+		fi
 	done
 	exit
 	;;
