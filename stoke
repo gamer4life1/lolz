@@ -74,6 +74,8 @@ case "${1}" in
 					stoke_message error "$z is not a valid MPR or apt package"
 					exit 1
 				fi
+			else
+				aptdeps+=("$z")
 			fi
 		done
 		if [[ ${#mprdeps[@]} -ne 0 ]]; then
@@ -81,6 +83,9 @@ case "${1}" in
 			for i in ${mprdeps[@]}; do
 				stoke install "$i"
 			done
+		fi
+		if [[ -z $aptdeps ]]; then
+			sudo apt-get install "${aptdeps[@]}"
 		fi
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
