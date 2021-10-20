@@ -40,7 +40,7 @@ function stoke_message() {
 }
 
 if ! command -v makedeb &>/dev/null; then
-  lolzy_message error "makedeb does not exist"
+  lolzy_message error "makedeb does not exist or is not in PATH"
   exit 1
 fi
 
@@ -134,6 +134,7 @@ case "${1}" in
 	# if the upgradable package count is 0, then that means nothing to upgrade
 	if [[ ${#upgradable[@]} -eq 0 ]]; then
 		stoke_message info "Nothing to upgrade"
+		exit
 	else
 		echo "These packages can be upgraded:"
 		echo -e "\t${upgradable[@]}"
@@ -159,7 +160,7 @@ case "${1}" in
 	INPUT="$2"
 	SEARCH=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq -C '.results[].Name' | tr -d '"')
 	if ! [[ $SEARCH ]]; then
-		stoke_message error "Nope, no packages matching $INPUT"
+		stoke_message error "No packages matching $INPUT"
 		exit 1
 	else
 		echo "$SEARCH"
