@@ -194,7 +194,7 @@ case "${1}" in
 	;;
   list)
 	for i in $(ls -1aA /var/db/stoke); do
-		if dpkg -l | grep "$i"; then
+		if dpkg -l | grep "$i" >/dev/null; then
 			echo "$i"
 		fi
 	done
