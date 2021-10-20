@@ -129,7 +129,6 @@ case "${1}" in
 			fi
 		fi
 		makedeb -si --no-confirm
-		sudo apt-get remove "$mprdeps"
 		rm -rf $TMP
 		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
 	done
