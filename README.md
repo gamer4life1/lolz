@@ -22,3 +22,9 @@ Set permissions:
 `sudo chmod +x /usr/local/bin/stoke`
 
 You're ready!
+
+
+### Features
+* Can install MPR dependencies (tap, I'm looking at you)
+* Parsable, easy to script with
+* All in one script (tap...)
