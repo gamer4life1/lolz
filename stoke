@@ -201,6 +201,10 @@ case "${1}" in
 	help_function
 	exit
 	;;
+  version)
+	echo "1.0 Plasma"
+	exit
+	;;
   *)
 	help_function
 	exit 1
