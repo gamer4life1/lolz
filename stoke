@@ -183,13 +183,10 @@ case "${1}" in
 	;;
   search)
 	INPUT="$2"
-	SEARCH=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq -C '.results[].Name' | tr -d '"')
-	if ! [[ $SEARCH ]]; then
-		stoke_message error "No packages matching $INPUT"
-		exit 1
-	else
-		echo "$SEARCH"
-	fi
+	for i in $(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"'); do
+		VERSION=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$i" | jq '.results[].Version' | tr -d '"')
+		echo "$i | $VERSION"
+	done
 	;;
   list)
 	for i in $(ls -1aA /var/db/stoke); do
