@@ -26,5 +26,5 @@ You're ready!
 
 ### Features
 * Can install MPR dependencies (tap, I'm looking at you)
-* Parsable, easy to script with
+* Parsable, easy to script with (tap, 👀)
 * All in one script (tap...)
