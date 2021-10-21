@@ -5,6 +5,7 @@ TMP="/tmp/stoke/"
 if [[ ! -d /var/db/stoke ]]; then
 	sudo mkdir -p /var/db/stoke
 fi
+
 # https://unix.stackexchange.com/a/567537/391386
 version_greater_equal() {
 	printf '%s\n%s\n' "$2" "$1" | sort --check=quiet --version-sort
@@ -184,10 +185,9 @@ case "${1}" in
 	;;
   search)
 	INPUT="$2"
-	for i in $(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"'); do
-		VERSION=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$i" | jq '.results[].Version' | tr -d '"')
-		echo "$i | $VERSION"
-	done
+	NAMES=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"')
+	VERSION=$(curl -s "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Version' | tr -d '"')
+	paste -d" " <(printf %s "$NAMES") <(printf %s "$VERSION")
 	;;
   list)
 	for i in $(ls -1aA /var/db/stoke); do
