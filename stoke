@@ -197,6 +197,17 @@ case "${1}" in
 	done
 	exit
 	;;
+  update)
+  	if ! sudo curl -L https://github.com/Henryws/stoke/raw/master/stoke -o /usr/local/bin/stoke; then
+		stoke_message error "Could not download stoke"
+		exit 1
+	fi
+	if ! sudo chmod +x /usr/local/bin/stoke; then
+		stoke_message error "Could not set permissions for stoke binary"
+		exit 1
+	fi
+	exit
+  	;;
   help)
 	help_function
 	exit
