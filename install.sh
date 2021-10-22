@@ -9,3 +9,5 @@ sudo apt install makedeb
 git clone https://mpr.hunterwittenborn.com/stoke-git.git
 cd stoke-git
 makedeb -si
+sudo mkdir -p /usr/share/bash-completion/completions/
+curl -s https://raw.githubusercontent.com/Henryws/stoke/master/stoke-completions | sudo tee /usr/share/bash-completion/completions/stoke >/dev/null

@@ -1,0 +1,38 @@
+#!/bin/bash
+_stoke() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+    	help)
+    		return
+    		;;
+
+    	list)
+		return
+    		;;
+        
+        upgrade)
+        return
+            ;;
+
+    	remove)
+      COMPREPLY=( $( compgen -W "$(ls -1aA /var/db/stoke)" -- $cur ) )
+    		return
+    		;;
+
+    	install)
+      COMPREPLY=( $( compgen -W "$(curl -s https://mpr.hunterwittenborn.com/packages.gz | gzip -d - | sed '1d')" -- $cur ) )
+		return
+		;;
+
+    esac
+
+    case "$cur" in
+        *)
+            COMPREPLY=( $( compgen -W "install list remove upgrade" -- "$cur" ) )
+	    return
+            ;;
+    esac
+}
+complete -o filenames -o bashdefault -F _stoke stoke
