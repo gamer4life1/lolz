@@ -1,11 +1,8 @@
-# Stoke
+# Stoke 🔥
 
-An MPR helper.
+An MPR helper written in bash
 
 ## How to install
-
-If you really want to...
-
 
 ### Install via MPR
 
