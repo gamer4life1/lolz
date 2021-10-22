@@ -41,7 +41,7 @@ function stoke_message() {
 }
 
 if ! command -v makedeb &>/dev/null; then
-  lolzy_message error "makedeb does not exist or is not in PATH"
+  stoke_message error "makedeb does not exist or is not in PATH"
   exit 1
 fi
 
