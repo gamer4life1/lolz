@@ -104,17 +104,7 @@ case "${1}" in
 				fi
 			done
 		fi
-		if [[ ${#mprdeps[@]} -ne 0 ]]; then
-			stoke_message info "Installing MPR dependencies first"
-			for j in "${mprdeps[*]}"; do
-				if ! stoke install "$j"; then
-					stoke_message error "$j failed to install"
-				fi
-			done
-		fi
-		if [[ -z ${aptdeps[*]} ]]; then
-			sudo apt-get install "${aptdeps[@]}"
-		fi
+
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
 		cd $TMP
@@ -129,6 +119,17 @@ case "${1}" in
 			else
 				sensible-editor PKGBUILD || stoke_message warn "No editor found, continuing..."
 			fi
+		fi
+		if [[ ${#mprdeps[@]} -ne 0 ]]; then
+			stoke_message info "Installing MPR dependencies first"
+			for j in "${mprdeps[*]}"; do
+				if ! stoke install "$j"; then
+					stoke_message error "$j failed to install"
+				fi
+			done
+		fi
+		if [[ -z ${aptdeps[*]} ]]; then
+			sudo apt-get install "${aptdeps[@]}"
 		fi
 		makedeb -sir --no-confirm
 		rm -rf $TMP
