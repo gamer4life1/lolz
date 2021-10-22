@@ -13,8 +13,8 @@ _stoke() {
     		;;
         
         upgrade)
-        return
-            ;;
+        	return
+            	;;
 
     	remove)
       COMPREPLY=( $( compgen -W "$(ls -1aA /var/db/stoke)" -- $cur ) )
