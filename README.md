@@ -56,4 +56,4 @@ Benchmark #1: ./stoke list
   Time (mean ± σ):     161.7 ms ±   2.5 ms    [User: 145.2 ms, System: 24.3 ms]
   Range (min … max):   159.8 ms … 171.2 ms    17 runs
 ```
-What was interesting here is that tap had 2 packages installed (gendesk and tap), but stoke beat it with more packages installed (gendesk, tap, mangohud, python3-pypresence and rare)
+What was interesting here is that tap had 2 packages installed (gendesk and tap), but stoke barely lost with more packages installed (gendesk, tap, mangohud, python3-pypresence and rare)
