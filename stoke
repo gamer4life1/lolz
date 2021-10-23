@@ -40,10 +40,12 @@ function stoke_message() {
 	esac
 }
 
-if ! command -v makedeb >/dev/null 2>&1; then
-  stoke_message error "makedeb does not exist or is not in PATH"
-  exit 1
-fi
+for i in {makedeb,wget,curl,gpg,git}; do
+	if ! command -v $i >/dev/null 2>&1; then
+	  stoke_message error "$i does not exist or is not in PATH"
+	  exit 1
+	fi
+done
 
 case "${1}" in
   install)
