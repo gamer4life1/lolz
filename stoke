@@ -194,7 +194,8 @@ case "${1}" in
 	paste -d" " <(printf %s "$NAMES") <(printf %s "$VERSION")
 	;;
   list)
-	for i in $(ls -1aA /var/db/stoke); do
+	cd /var/db/stoke
+	for i in *; do
 		if dpkg -l | grep "$i" >/dev/null; then
 			echo "$i"
 		fi
