@@ -188,8 +188,9 @@ case "${1}" in
 	;;
   search)
 	INPUT="$2"
-	NAMES=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Name' | tr -d '"')
-	VERSION=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT" | jq '.results[].Version' | tr -d '"')
+	CURL=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT")
+	NAMES=$(echo "$CURL" | jq '.results[].Name' | tr -d '"')
+	VERSION=$(echo "$CURL" | jq '.results[].Version' | tr -d '"')
 	paste -d" " <(printf %s "$NAMES") <(printf %s "$VERSION")
 	;;
   list)
