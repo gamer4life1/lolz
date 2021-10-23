@@ -22,7 +22,7 @@ _stoke() {
     		;;
 
     	install)
-      COMPREPLY=( $( compgen -W "$(curl -s https://mpr.hunterwittenborn.com/packages.gz | gzip -d - | sed '1d')" -- $cur ) )
+      COMPREPLY=( $( compgen -W "$(curl -s -H "stoke: 1.0" https://mpr.hunterwittenborn.com/packages.gz | gzip -d - | sed '1d')" -- $cur ) )
 		return
 		;;
 
