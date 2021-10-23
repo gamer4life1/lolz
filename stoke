@@ -61,14 +61,14 @@ case "${1}" in
 	INPUT="$*"
 	for i in $INPUT; do
 		URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$i"
-		VERSION=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[0].Version' | tr -d '"')
+		VERSION=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')
 		if ! curl --output /dev/null --silent --head --fail "$URL"; then
 			stoke_message error "$i does not exist"
 			exit 1
 		fi
 		# it's about to get rough
 		# get list of deps
-		deps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[].Depends' | sed 's/\,//g' | sed 's/\[//g' | sed 's/\]//g' | tr -d '"' | tr -s ' ' | tr "\n" " " | tr -s ' ' | cut -d "%" -f 2) )
+		deps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]') )
 		if [[ $deps != "null" ]] && [[ $deps != "" ]]; then
 			# do a list of deps
 			for z in "${deps[@]}"; do
@@ -87,7 +87,7 @@ case "${1}" in
 				fi
 			done
 		fi
-		makedeps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq '.results[].MakeDepends' | sed 's/\,//g' | sed 's/\[//g' | sed 's/\]//g' | tr -d '"' | tr -s ' ' | tr "\n" " " | tr -s ' ' | cut -d "%" -f 2) )
+		makedeps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]') )
 		if [[ $makedeps != "null" ]] && [[ $makedeps != "" ]]; then
 			# do a list of deps
 			for z in "${makedeps[@]}"; do
@@ -109,7 +109,7 @@ case "${1}" in
 
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
-		cd $TMP
+		cd $TMP || stoke_message error "Could not cd into $TMP"; exit 1
 		# this should be the fastest possible git clone, because it's cloning without commit history, and only cloning the master branch, instead of git taking more time to find out that the only branch is master.
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
 		cd $(basename $i .git)
@@ -156,7 +156,7 @@ case "${1}" in
 	# get a list of packages installed by stoke
 	cd /var/db/stoke
 	for i in *; do
-		VERSION=$(curl -s -H "stoke: 1.0" "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq -C '.results[0].Version' | tr -d '"')
+		VERSION=$(curl -s -H "stoke: 1.0" "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')
 		# check if the local version is less than the remote version and if so, mark it for upgrade
 		if ! version_greater_equal "$(cat /var/db/stoke/$i)" $VERSION; then
 			mark_upgrade "$i"
@@ -190,8 +190,8 @@ case "${1}" in
   search)
 	INPUT="$2"
 	CURL=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT")
-	NAMES=$(echo "$CURL" | jq '.results[].Name' | tr -d '"')
-	VERSION=$(echo "$CURL" | jq '.results[].Version' | tr -d '"')
+	NAMES=$(echo "$CURL" | jq --raw-output '.results[].Name')
+	VERSION=$(echo "$CURL" | jq --raw-output '.results[].Version')
 	paste -d" " <(printf %s "$NAMES") <(printf %s "$VERSION")
 	;;
   list)
