@@ -28,6 +28,7 @@ You're ready!
 
 ### How to use
 Flags in Stoke are exactly like apt
+
 `stoke install pkg` Will install a package. If you specify `stoke install -y pkg`, Stoke will not open your editor to review the PKGBUILD
 
 `stoke remove pkg` Will remove a package
