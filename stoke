@@ -40,7 +40,7 @@ function stoke_message() {
 	esac
 }
 
-for i in {makedeb,wget,curl,gpg,git}; do
+for i in {makedeb,wget,curl,gpg,git,jq}; do
 	if ! command -v $i >/dev/null 2>&1; then
 	  stoke_message error "$i does not exist or is not in PATH"
 	  exit 1
