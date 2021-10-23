@@ -1,4 +1,10 @@
 #!/bin/sh
+set -e
+if command -v sudo; then
+  sudo apt install wget curl git gpg
+else
+  apt install wget curl git gpg
+fi
 wget -qO - 'https://proget.hunterwittenborn.com/debian-feeds/makedeb.pub' | \
 gpg --dearmor | \
 sudo tee /usr/share/keyrings/makedeb-archive-keyring.gpg &> /dev/null
