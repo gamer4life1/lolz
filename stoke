@@ -68,7 +68,7 @@ case "${1}" in
 		fi
 		# it's about to get rough
 		# get list of deps
-		deps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]') )
+		deps=( "$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]')" )
 		if [[ ${deps[*]} != "null" ]] && [[ ${deps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${deps[@]}"; do
@@ -87,7 +87,7 @@ case "${1}" in
 				fi
 			done
 		fi
-		makedeps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]') )
+		makedeps=( "$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]')" )
 		if [[ ${makedeps[*]} != "null" ]] && [[ ${makedeps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${makedeps[@]}"; do
@@ -158,7 +158,7 @@ case "${1}" in
 	for i in *; do
 		VERSION=$(curl -s -H "stoke: 1.0" "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')
 		# check if the local version is less than the remote version and if so, mark it for upgrade
-		if ! version_greater_equal "$(cat /var/db/stoke/$i)" "$VERSION"; then
+		if ! version_greater_equal "$(cat /var/db/stoke/"$i")" "$VERSION"; then
 			mark_upgrade "$i"
 		fi
 	done
