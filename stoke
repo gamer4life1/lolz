@@ -41,7 +41,7 @@ function stoke_message() {
 }
 
 for i in {makedeb,wget,curl,gpg,git,jq}; do
-	if ! command -v $i >/dev/null 2>&1; then
+	if ! command -v "$i" >/dev/null 2>&1; then
 	  stoke_message error "$i does not exist or is not in PATH"
 	  exit 1
 	fi
@@ -69,7 +69,7 @@ case "${1}" in
 		# it's about to get rough
 		# get list of deps
 		deps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]') )
-		if [[ $deps != "null" ]] && [[ $deps != "" ]]; then
+		if [[ ${deps[*]} != "null" ]] && [[ ${deps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${deps[@]}"; do
 				# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
@@ -88,7 +88,7 @@ case "${1}" in
 			done
 		fi
 		makedeps=( $(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]') )
-		if [[ $makedeps != "null" ]] && [[ $makedeps != "" ]]; then
+		if [[ ${makedeps[*]} != "null" ]] && [[ ${makedeps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${makedeps[@]}"; do
 				# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
@@ -112,7 +112,7 @@ case "${1}" in
 		cd $TMP || stoke_message error "Could not cd into $TMP"; exit 1
 		# this should be the fastest possible git clone, because it's cloning without commit history, and only cloning the master branch, instead of git taking more time to find out that the only branch is master.
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
-		cd $(basename $i .git)
+		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory" ; exit 1
 		if [[ -z $NOEDIT ]]; then
 			if [[ -n $EDITOR ]]; then
 				$EDITOR PKGBUILD
@@ -135,7 +135,7 @@ case "${1}" in
 		fi
 		makedeb -sir --no-confirm
 		rm -rf $TMP
-		echo "$VERSION" | sudo tee /var/db/stoke/$i >/dev/null
+		echo "$VERSION" | sudo tee /var/db/stoke/"$i" >/dev/null
 	done
 	exit
 	;;
@@ -158,7 +158,7 @@ case "${1}" in
 	for i in *; do
 		VERSION=$(curl -s -H "stoke: 1.0" "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')
 		# check if the local version is less than the remote version and if so, mark it for upgrade
-		if ! version_greater_equal "$(cat /var/db/stoke/$i)" $VERSION; then
+		if ! version_greater_equal "$(cat /var/db/stoke/$i)" "$VERSION"; then
 			mark_upgrade "$i"
 		fi
 	done
@@ -171,7 +171,7 @@ case "${1}" in
 		echo -e "\t${upgradable[*]}"
 		read -e -p "Do you want to continue? " choice
 		if [[ "$choice" == [Yy]* ]]; then
-			for i in ${upgradable[@]}; do
+			for i in "${upgradable[@]}"; do
 				if ! stoke install "$i"; then
 					failed+=("$i")
 				else
