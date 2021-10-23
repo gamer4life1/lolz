@@ -26,6 +26,14 @@ You're ready!
 * Parsable, easy to script with (tap, 👀)
 * All in one script (tap...)
 
+### How to use
+Flags in Stoke are exactly like apt
+`stoke install pkg` Will install a package. If you specify `stoke install -y pkg`, Stoke will not open your editor to review the PKGBUILD
+`stoke remove pkg` Will remove a package
+`stoke search pkg` Will search for a package
+`stoke list` Will list packages installed
+`stoke upgrade` Will check for updates to packages. If you specify `stoke upgrade --git`, Stoke will update **all** git packages
+
 ### [Benchmarks against tap](https://tenor.com/view/baby-cute-smile-gif-12843681)
 #### Searching
 - `tap search ls`
