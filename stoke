@@ -131,7 +131,7 @@ case "${1}" in
 			done
 		fi
 		if [[ -z ${aptdeps[*]} ]]; then
-			sudo apt-get install "${aptdeps[@]}"
+			sudo apt-get install "${aptdeps[*]}" -y
 		fi
 		makedeb -sir --no-confirm
 		rm -rf $TMP
@@ -142,7 +142,7 @@ case "${1}" in
   remove)
 	INPUT="$2"
 	if [[ -f /var/db/stoke/$INPUT ]]; then
-		if ! sudo apt-get remove "$INPUT"; then
+		if ! sudo apt-get remove "$INPUT" -y; then
 			stoke_message error "Failed to remove $INPUT"
 			exit 1
 		fi
