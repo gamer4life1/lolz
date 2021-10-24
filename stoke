@@ -35,22 +35,22 @@ function stoke_message() {
 	local BYellow='\033[1;33m'
 
 	case ${MESSAGE_TYPE} in
-		info) echo -e "[${BGreen}+${NC}] INFO: ${MESSAGE}";;
-		warn) echo -e "[${BYellow}*${NC}] WARN: ${MESSAGE}";;
-		error) echo -e "[${BRed}!${NC}] ERROR: ${MESSAGE}";;
-		*) echo -e "[?] UNKNOWN: ${MESSAGE}";;
+	info) echo -e "[${BGreen}+${NC}] INFO: ${MESSAGE}" ;;
+	warn) echo -e "[${BYellow}*${NC}] WARN: ${MESSAGE}" ;;
+	error) echo -e "[${BRed}!${NC}] ERROR: ${MESSAGE}" ;;
+	*) echo -e "[?] UNKNOWN: ${MESSAGE}" ;;
 	esac
 }
 
 for i in {makedeb,wget,curl,gpg,git,jq}; do
 	if ! command -v "$i" >/dev/null 2>&1; then
-	  stoke_message error "$i does not exist or is not in PATH"
-	  exit 1
+		stoke_message error "$i does not exist or is not in PATH"
+		exit 1
 	fi
 done
 
 case "${1}" in
-  install)
+install)
 	if ! curl --output /dev/null --silent --head --fail "$MPR"; then
 		stoke_message error "Cannot reach $MPR"
 		exit 1
@@ -73,7 +73,7 @@ case "${1}" in
 		fi
 		# it's about to get rough
 		# get list of deps
-		deps=( "$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]')" )
+		deps=("$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]')")
 		if [[ ${deps[*]} != "null" ]] && [[ ${deps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${deps[@]}"; do
@@ -92,7 +92,7 @@ case "${1}" in
 				fi
 			done
 		fi
-		makedeps=( "$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]')" )
+		makedeps=("$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]')")
 		if [[ ${makedeps[*]} != "null" ]] && [[ ${makedeps[*]} != "" ]]; then
 			# do a list of deps
 			for z in "${makedeps[@]}"; do
@@ -114,10 +114,12 @@ case "${1}" in
 
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
-		cd $TMP || stoke_message error "Could not cd into $TMP"; exit 1
+		cd $TMP || stoke_message error "Could not cd into $TMP"
+		exit 1
 		# this should be the fastest possible git clone, because it's cloning without commit history, and only cloning the master branch, instead of git taking more time to find out that the only branch is master.
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
-		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory" ; exit 1
+		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory"
+		exit 1
 		if [[ -z $NOEDIT ]]; then
 			if [[ -n $EDITOR ]]; then
 				$EDITOR PKGBUILD
@@ -144,7 +146,7 @@ case "${1}" in
 	done
 	exit
 	;;
-  remove)
+remove)
 	INPUT="$2"
 	if [[ -f /var/db/stoke/$INPUT ]]; then
 		if ! sudo apt-get remove "$INPUT" -y; then
@@ -157,7 +159,7 @@ case "${1}" in
 		exit 1
 	fi
 	;;
-  upgrade)
+upgrade)
 	shift
 	if [[ $1 == "--git" ]]; then
 		export REBUILDGIT=1
@@ -170,7 +172,7 @@ case "${1}" in
 			if [[ $i == *-git ]]; then
 				mark_upgrade "$i"
 			fi
-		else	
+		else
 			if ! version_greater_equal "$(cat /var/db/stoke/"$i")" "$(curl -s -H "stoke: 1.0" "https://mpr.hunterwittenborn.com/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')"; then
 				mark_upgrade "$i"
 			fi
@@ -201,12 +203,12 @@ case "${1}" in
 		fi
 	fi
 	;;
-  search)
+search)
 	INPUT="$2"
 	CURL=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT")
 	paste -d" " <(echo "$CURL" | jq --raw-output '.results[].Name') <(echo "$CURL" | jq --raw-output '.results[].Version')
 	;;
-  list)
+list)
 	cd /var/db/stoke
 	for i in *; do
 		if dpkg -l | grep "$i" >/dev/null; then
@@ -215,7 +217,7 @@ case "${1}" in
 	done
 	exit
 	;;
-  update)
+update)
 	if ! sudo curl -L https://github.com/Henryws/stoke/raw/master/stoke -o /usr/local/bin/stoke; then
 		stoke_message error "Could not download stoke"
 		exit 1
@@ -226,15 +228,15 @@ case "${1}" in
 	fi
 	exit
 	;;
-  help)
+help)
 	help_function
 	exit
 	;;
-  version)
+version)
 	echo "1.0 Plasma"
 	exit
 	;;
-  *)
+*)
 	help_function
 	exit 1
 	;;
