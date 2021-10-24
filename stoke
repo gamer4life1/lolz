@@ -140,7 +140,7 @@ install)
 		fi
 		makedeb -sir --no-confirm
 		rm -rf $TMP
-		echo "$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version')" | sudo tee /var/db/stoke/"$i" >/dev/null
+		curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version' | sudo tee /var/db/stoke/"$i" >/dev/null
 	done
 	exit
 	;;
@@ -163,6 +163,7 @@ upgrade)
 		export REBUILDGIT=1
 	fi
 	# get a list of packages installed by stoke
+	# shellcheck disable=SC2164
 	cd /var/db/stoke
 	for i in *; do
 		# check if the local version is less than the remote version and if so, mark it for upgrade
