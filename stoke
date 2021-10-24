@@ -208,6 +208,7 @@ search)
 	paste -d" " <(echo "$CURL" | jq --raw-output '.results[].Name') <(echo "$CURL" | jq --raw-output '.results[].Version')
 	;;
 list)
+	# shellcheck disable=SC2164
 	cd /var/db/stoke
 	for i in *; do
 		if dpkg -l | grep "$i" >/dev/null; then
