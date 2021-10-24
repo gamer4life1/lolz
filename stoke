@@ -114,12 +114,10 @@ install)
 
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
-		cd $TMP || stoke_message error "Could not cd into $TMP"
-		exit 1
+		cd $TMP || stoke_message error "Could not cd into $TMP"; exit 1
 		# this should be the fastest possible git clone, because it's cloning without commit history, and only cloning the master branch, instead of git taking more time to find out that the only branch is master.
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
-		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory"
-		exit 1
+		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory"; exit 1
 		if [[ -z $NOEDIT ]]; then
 			if [[ -n $EDITOR ]]; then
 				$EDITOR PKGBUILD
