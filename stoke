@@ -16,14 +16,14 @@ mark_upgrade() {
 }
 
 help_function() {
-	echo "stoke -- an MPR helper"
-	echo "stoke install (-y) -- installs a package"
-	echo "  - with the -y option, stoke will not open your editor to edit packages"
-	echo "stoke remove -- removes a package"
-	echo "stoke upgrade (--git) -- upgrades packages"
-	echo "  - with the --git option, stoke will trigger all git packages to be upgraded"
-	echo "stoke search -- searches for package"
-	echo "stoke list -- lists packages installed"
+	echo "stoke -- an MPR helper
+stoke install (-y) -- installs a package
+	- with the -y option, stoke will not open your editor to edit packages
+stoke remove -- removes a package
+stoke upgrade (--git) -- upgrades packages
+	- with the --git option, stoke will trigger all git packages to be upgraded
+stoke search -- searches for package
+stoke list -- lists packages installed"
 }
 
 function stoke_message() {
