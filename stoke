@@ -76,16 +76,16 @@ install)
 		deps=("$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].Depends | .[]')")
 		if [[ ${deps[*]} != "null" ]] && [[ ${deps[*]} != "" ]]; then
 			# do a list of deps
-			for z in "${deps[@]}"; do
+			for z in ${deps[*]}; do
 				# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
 				if ! apt-cache show "$z" >/dev/null 2>&1; then
 					# if the package exists in the MPR, add it to the mprdeps list
-					if curl --output /dev/null --silent --head --fail "$MPR/cgit/aur.git/plain/PKGBUILD?h=$z"; then
+					if curl --output /dev/null --silent --head --fail "${MPR}/cgit/aur.git/plain/PKGBUILD?h=$z"; then
 						mprdeps+=("$z")
 					# else fail
 					else
 						stoke_message error "$z is not a valid MPR or apt package"
-						exit 1
+						exit 2
 					fi
 				else
 					aptdeps+=("$z")
@@ -95,16 +95,16 @@ install)
 		makedeps=("$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[].MakeDepends | .[]')")
 		if [[ ${makedeps[*]} != "null" ]] && [[ ${makedeps[*]} != "" ]]; then
 			# do a list of deps
-			for z in "${makedeps[@]}"; do
+			for z in ${makedeps[*]}; do
 				# if the apt search fails, go to MPR search, but if apt search works, add to list of apt deps
 				if ! apt-cache show "$z" >/dev/null 2>&1; then
 					# if the package exists in the MPR, add it to the mprdeps list
-					if curl --output /dev/null --silent --head --fail "$MPR/cgit/aur.git/plain/PKGBUILD?h=$z"; then
+					if curl --output /dev/null --silent --head --fail "${MPR}/cgit/aur.git/plain/PKGBUILD?h=$z"; then
 						mprdeps+=("$z")
 					# else fail
 					else
 						stoke_message error "$z is not a valid MPR or apt package"
-						exit 1
+						exit 3
 					fi
 				else
 					aptdeps+=("$z")
@@ -114,10 +114,10 @@ install)
 
 		stoke_message info "Installing $i..."
 		mkdir -p $TMP
-		cd $TMP || stoke_message error "Could not cd into $TMP"; exit 1
+		cd $TMP
 		# this should be the fastest possible git clone, because it's cloning without commit history, and only cloning the master branch, instead of git taking more time to find out that the only branch is master.
 		git clone --depth=1 --single-branch --branch=master "$MPR/$i.git"
-		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory"; exit 1
+		cd "$(basename "$i" .git)" || stoke_message info "Could not cd into directory"
 		if [[ -z $NOEDIT ]]; then
 			if [[ -n $EDITOR ]]; then
 				$EDITOR PKGBUILD
