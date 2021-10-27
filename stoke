@@ -151,6 +151,7 @@ remove)
 			stoke_message error "Failed to remove $INPUT"
 			exit 1
 		fi
+		sudo apt -y autoremove && sudo apt autoclean >/dev/null
 		sudo rm -f /var/db/stoke/"$INPUT"
 	else
 		stoke_message error "$INPUT is not a valid MPR package"
