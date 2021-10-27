@@ -159,6 +159,10 @@ remove)
 	;;
 upgrade)
 	shift
+	if [[ $1 == "-y" ]]; then
+		export NOEDIT=1
+		shift
+	fi
 	if [[ $1 == "--git" ]]; then
 		export REBUILDGIT=1
 	fi
