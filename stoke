@@ -2,6 +2,9 @@
 export LC_ALL=C
 MPR='https://mpr.hunterwittenborn.com'
 TMP="/tmp/stoke/"
+if ! [[ -f /var/db/stoke/ ]]; then
+	sudo mkdir -p /var/db/stoke
+fi
 
 # https://unix.stackexchange.com/a/567537/391386
 version_greater_equal() {
@@ -136,6 +139,7 @@ install)
 			sudo apt-get install "${aptdeps[*]}" -y
 		fi
 		makedeb -sir --no-confirm -H 'stoke-build: stoke'
+		sudo touch /var/db/stoke/"$i"
 		rm -rf $TMP/"${i:?}"
 		curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=info&arg=$i" | jq --raw-output '.results[0].Version' | sudo tee /var/db/stoke/"$i" >/dev/null
 	done
@@ -149,6 +153,7 @@ remove)
 			exit 1
 		fi
 		sudo apt -y autoremove && sudo apt autoclean >/dev/null
+		sudo rm -f /var/db/stoke/"$INPUT"
 	else
 		stoke_message error "$INPUT is not a valid MPR package"
 		exit 1
