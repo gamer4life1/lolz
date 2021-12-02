@@ -56,7 +56,7 @@ fi
 
 case "${1}" in
 install)
-	if ! curl --output /dev/null --silent --head --fail "$MPR"; then
+	if ! curl --output /dev/null --silent --head "$MPR"; then
 		stoke_message error "Cannot reach $MPR"
 		exit 1
 	fi
