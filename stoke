@@ -49,6 +49,11 @@ for i in {makedeb,wget,curl,gpg,git,jq}; do
 	fi
 done
 
+if [[ $EUID -eq 0 ]]; then
+  stoke_message error "You cannot run $0 as root"
+  exit
+fi
+
 case "${1}" in
 install)
 	if ! curl --output /dev/null --silent --head --fail "$MPR"; then
