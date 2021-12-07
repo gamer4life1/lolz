@@ -69,11 +69,13 @@ install)
 	for i in $INPUT; do
 		URL="$MPR/cgit/aur.git/plain/PKGBUILD?h=$i"
 		if ! curl --output /dev/null --silent --head --fail "$URL"; then
-			if apt-cache show "$i" >/dev/null 2>&1; then
-				sudo apt-get install "$i"
-			else
-				stoke_message error "$i does not exist"
-				exit 1
+			if [[ -n "$STOKE_REVERSE_INSTALL_ORDER" ]]; then
+				if apt-cache show "$i" >/dev/null 2>&1; then
+					sudo apt-get install "$i"
+				else
+					stoke_message error "$i does not exist"
+					exit 1
+				fi
 			fi
 		fi
 		# it's about to get rough
