@@ -219,7 +219,7 @@ upgrade)
 	;;
 search)
 	INPUT="$2"
-	CURL=$(curl -s -H "stoke: 1.0" "$MPR/rpc/?v=5&type=search&arg=$INPUT")
+	CURL=$(curl -s -H "stoke: 1.0" "$MPR/rpc?v=5&type=search&arg=$INPUT")
 	paste -d" " <(echo "$CURL" | jq --raw-output '.results[].Name') <(echo "$CURL" | jq --raw-output '.results[].Version')
 	;;
 list)
